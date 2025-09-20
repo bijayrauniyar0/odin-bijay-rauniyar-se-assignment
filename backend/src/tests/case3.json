@@ -1,0 +1,5 @@
+{
+  "capacity": 4,
+  "refill_rate_per_sec": 3,
+  "requests": [0, 0.1, 0.2, 0.5, 1.0, 1.1]
+}
