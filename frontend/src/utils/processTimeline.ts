@@ -4,7 +4,7 @@ export function processTimeline(input: Input): TimelineItem[] {
   const { messages, currentUserId, readAt } = input;
   if (!messages || messages.length === 0) return [];
 
-  // 1. Sort messages by createdAt, tie-breaker by id
+  // Sort messages by createdAt, tie-breaker by id
   const sorted = [...messages].sort((a, b) => {
     const t1 = new Date(a.createdAt).getTime();
     const t2 = new Date(b.createdAt).getTime();
@@ -23,9 +23,9 @@ export function processTimeline(input: Input): TimelineItem[] {
 
   for (const msg of sorted) {
     const msgTime = new Date(msg.createdAt).getTime();
-    const msgDate = msg.createdAt.split("T")[0]; // YYYY-MM-DD
+    const msgDate = msg.createdAt.split("T")[0];
 
-    // 2. Insert day separator if date changed
+    // Insert day separator if date changed
     if (msgDate !== prevDate) {
       if (bubbleMessages.length > 0) {
         timeline.push({
@@ -42,7 +42,7 @@ export function processTimeline(input: Input): TimelineItem[] {
       prevTime = 0;
     }
 
-    // 3. Insert unread divider if not inserted and message after readAt
+    // Insert unread divider if not inserted and message after readAt
     if (!unreadInserted && readAt && msgTime > readTimestamp) {
       if (bubbleMessages.length > 0) {
         timeline.push({
@@ -59,7 +59,7 @@ export function processTimeline(input: Input): TimelineItem[] {
       prevTime = 0;
     }
 
-    // 4. Group into bubbles (same author within 2 minutes)
+    // Group into bubbles (same author within 2 minutes)
     if (msg.authorId === prevAuthor && msgTime - prevTime <= 2 * 60 * 1000) {
       bubbleMessages.push(msg);
     } else {
@@ -77,7 +77,6 @@ export function processTimeline(input: Input): TimelineItem[] {
     prevTime = msgTime;
   }
 
-  // Push any remaining bubble
   if (bubbleMessages.length > 0) {
     timeline.push({
       type: "bubble",
