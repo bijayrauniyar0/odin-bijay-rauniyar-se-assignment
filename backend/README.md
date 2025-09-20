@@ -81,3 +81,27 @@ npx ts-node src/cli.ts example.json
   { "t": 1.5, "allowed": true, "tokens_after": 4 }
 ]
 ```
+
+### Thought Process
+
+- **Token-Bucket Simulation**:
+
+  1. Initialize the bucket with `capacity` at the first request.
+  2. For each request, calculate `elapsed = t - prevTime`.
+  3. Refill tokens: `tokens = min(capacity, tokens + elapsed * refill_rate_per_sec)`.
+  4. Decide:
+     - If `tokens >= 1`, allow the request and consume 1 token.
+     - Otherwise, deny the request.
+  5. Record `{ t, allowed, tokens_after }` for each request.
+
+- **Edge Cases Considered**:
+
+  - Multiple requests at the same timestamp.
+  - Fractional refill rates.
+  - Bucket refill exceeding capacity.
+  - Empty request list.
+
+- **Design Choices / Trade-offs**:
+  - Chose **offline simulation** using a single array iteration for simplicity.
+  - Rounded `tokens_after` to 6 decimal places to avoid floating-point precision issues.
+  - Did not validate JSON structure beyond parsing; the assessment did not require it.

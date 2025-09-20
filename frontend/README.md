@@ -73,3 +73,32 @@ const input: Input = {
 ```
 
 **Where** `input` includes messages across multiple days, multiple authors, same timestamps, and unread messages.
+
+### Thought Process
+
+- **Sorting**:
+
+  - Messages are sorted by `createdAt` ascending.
+  - `id` is used as a tie-breaker for messages with identical timestamps.
+
+- **Bubble Grouping**:
+
+  - Consecutive messages from the same author within **2 minutes** are grouped into a single bubble.
+  - Each message is stacked vertically inside the bubble.
+  - Author is displayed only once per bubble.
+
+- **Day Separators**:
+
+  - Inserted whenever the date changes between consecutive messages.
+
+- **Unread Divider**:
+
+  - Placed **before the first message from another user** strictly after `readAt`.
+  - Messages from the current user are never marked as unread.
+
+- **Edge Cases Covered**:
+  - Messages with exact same timestamp → tie-breaker by id.
+  - Messages crossing midnight → new day separator.
+  - Fractional seconds in timestamps.
+  - Empty message list.
+  - Consecutive messages by same user spanning multiple days.
